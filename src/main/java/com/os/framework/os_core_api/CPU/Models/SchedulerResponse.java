@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * Represents the response model containing performance metrics
  * after executing a CPU scheduling strategy.
@@ -12,6 +14,9 @@ import lombok.Data;
 @Builder
 @Schema(description = "Response model for CPU scheduling results, including performance metrics.")
 public class SchedulerResponse {
+
+    @Schema(description = "List of all the processes.")
+    List<Process> processes;
 
     @Schema(description = "CPU utilization as a percentage", example = "85.5")
     private double cpuUtilization;
