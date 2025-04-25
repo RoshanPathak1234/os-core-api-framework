@@ -55,11 +55,7 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
 
         List<Process> processes = new ArrayList<>();
         for (int i = 0; i < arrival.length; i++) {
-            processes.add(Process.builder()
-                    .arrivalTime(arrival[i])
-                    .burstTime(burst[i])
-                    .priority(priority[i])
-                    .build());
+            processes.add(Process.create(arrival[i] , burst[i] , priority[i]));
         }
         return processes;
     }
@@ -86,18 +82,29 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
         this.events.clear();
     }
 
+    public CpuScheduler buildScheduler(Object arrivalTimes, Object burstTimes, Object priorities, int contextSwitchingDelay) {
+        return new CpuScheduler(arrivalTimes , burstTimes , priorities , contextSwitchingDelay);
+    }
+
+    public void reset() {
+        processes.clear();
+        Process.reset();
+    }
+
     public void execute() {
         if (strategy == null) {
             throw new IllegalStateException("No strategy set. Use setStrategy() before executing.");
         }
-        events = strategy.execute(processes , contextSwitchingDelay);
+        events = strategy.execute(processes, contextSwitchingDelay);
     }
 
     public void setStrategy(SchedulingStrategy strategyName) {
-        Supplier<Strategy> StrategyMethod =  StrategyMAP.STRATEGY_MAP.get(strategyName);
+        Supplier<Strategy> StrategyMethod = StrategyMAP.STRATEGY_MAP.get(strategyName);
         this.strategy = StrategyMethod.get();
-//        clearResults();
+        if (events != null)
+            clearResults();
     }
+
 
     @Override
     public double averageTurnaroundTime() {
@@ -114,7 +121,8 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
         int totalBusyTime = events.stream().filter(e -> !e.isIdle() && !e.isContextSwitching())
                 .mapToInt(e -> e.getEndTime() - e.getStartTime()).sum();
         int lastCompletionTime = events.stream().mapToInt(ProcessEvent::getEndTime).max().orElse(1);
-        return (double) totalBusyTime / lastCompletionTime;
+
+        return Double.parseDouble(String.format("%.3f", (100.0 * totalBusyTime / lastCompletionTime)));
     }
 
     @Override
@@ -137,13 +145,14 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
     @Override
     public double throughput() {
         int lastCompletionTime = processes.stream().mapToInt(Process::getCompletionTime).max().orElse(1);
-        return (double) processes.size() / lastCompletionTime;
+        return Double.parseDouble(String.format("%.3f", (100.0 * processes.size() / lastCompletionTime)));
     }
 
     @Override
     public double efficiency() {
         int totalBurstTime = processes.stream().mapToInt(Process::getBurstTime).sum();
         int lastCompletionTime = processes.stream().mapToInt(Process::getCompletionTime).max().orElse(1);
-        return (double) totalBurstTime / lastCompletionTime;
+        return Double.parseDouble(String.format("%.3f", (100.0 * totalBurstTime / lastCompletionTime)));
+
     }
 }

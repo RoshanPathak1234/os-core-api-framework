@@ -50,7 +50,7 @@ public class CpuApiController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(mediaType = "text/plain"))
     })
-    @PostMapping("compute")
+    @PostMapping("scheduler/compute")
     public ResponseEntity<?> executeScheduler(@Valid @RequestBody SchedulingRequest request) {
         log.info("Request Received  + {}", request);
 

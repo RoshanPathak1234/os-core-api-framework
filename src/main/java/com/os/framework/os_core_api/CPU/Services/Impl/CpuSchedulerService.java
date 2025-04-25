@@ -35,6 +35,8 @@ public class CpuSchedulerService {
         
         SchedulerResponse response =  buildResponse(scheduler);
 
+        scheduler.displayGanttChart();
+
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 

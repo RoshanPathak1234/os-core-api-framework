@@ -103,4 +103,10 @@ public class Process {
         process.setName("P" + process.pid);
         return process;
     }
+
+    public static void reset() {
+        pidCounter.set(1);
+    }
+
+
 }
