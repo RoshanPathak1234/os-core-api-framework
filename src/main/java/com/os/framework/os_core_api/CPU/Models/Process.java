@@ -24,8 +24,8 @@ public class Process {
     /**
      * Process ID - a unique identifier for the process
      */
-    @Schema(description = "Process ID", example = "1")
-    private int pid;
+    @Schema(description = "Process ID (Auto Generated)", example = "1")
+    private long pid;
 
     /**
      * Name of the process
@@ -55,8 +55,8 @@ public class Process {
      * Priority of the process, used for scheduling purposes
      * Default value is -1 indicating that the priority is not set
      */
-    @Schema(description = "Priority of the process", example = "3", defaultValue = "-1")
-    private int priority = -1;
+    @Schema(description = "Priority of the process", example = "3", defaultValue = "0")
+    private int priority = 0;
 
     /**
      * Time when the process finishes execution

@@ -33,7 +33,7 @@ public interface SchedulerPerformanceMatrics {
      * Displays the Gantt chart representation of the process execution order.
      * Useful for visualizing the timeline of process scheduling.
      */
-    void displayGanttChart();
+    String displayGanttChart();
 
     /**
      * Calculates the throughput of the scheduling strategy.

@@ -32,4 +32,7 @@ public class SchedulerResponse {
 
     @Schema(description = "Overall efficiency of the scheduling algorithm", example = "90.2")
     private double efficiency;
+
+    @Schema(description = "Gantt chart")
+    private String ganttChart;
 }

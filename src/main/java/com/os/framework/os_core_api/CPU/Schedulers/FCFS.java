@@ -12,18 +12,16 @@ public class FCFS implements Strategy {
 
     @Override
     public List<ProcessEvent> execute(List<Process> processes, int contextSwitchingDelay) {
-        List<ProcessEvent> timeline = new ArrayList<>();
+        List<ProcessEvent> events = new ArrayList<>();
 
         processes.sort(Comparator.comparingInt(Process::getArrivalTime));
 
         int currentTime = 0;
 
-        for (int i = 0; i < processes.size(); i++) {
-
-            Process process = processes.get(i);
+        for (Process process : processes) {
 
             if (currentTime < process.getArrivalTime()) {
-                timeline.add(ProcessEvent.builder()
+                events.add(ProcessEvent.builder()
                         .process(null)
                         .startTime(currentTime)
                         .endTime(process.getArrivalTime())
@@ -33,21 +31,20 @@ public class FCFS implements Strategy {
                 currentTime = process.getArrivalTime();
             }
 
-            if (i > 0 && contextSwitchingDelay > 0) {
-                timeline.add(ProcessEvent.builder()
+            if (contextSwitchingDelay > 0) {
+                events.add(ProcessEvent.builder()
                         .process(null)
                         .startTime(currentTime)
-                        .endTime(currentTime + contextSwitchingDelay)
+                        .endTime(currentTime += contextSwitchingDelay)
                         .idle(false)
                         .contextSwitching(true)
                         .build());
-                currentTime += contextSwitchingDelay;
             }
 
             int startTime = currentTime;
             int endTime = startTime + process.getBurstTime();
 
-            timeline.add(ProcessEvent.builder()
+            events.add(ProcessEvent.builder()
                     .process(process)
                     .startTime(startTime)
                     .endTime(endTime)
@@ -58,7 +55,7 @@ public class FCFS implements Strategy {
             currentTime = endTime;
 
             int tat = endTime - process.getArrivalTime();
-            int wt = tat - process.getArrivalTime();
+            int wt = tat - process.getBurstTime();
 
             process.setRemainingBurstTime(0);
             process.setCompleted(true);
@@ -67,6 +64,6 @@ public class FCFS implements Strategy {
             process.setWaitingTime(wt);
         }
 
-        return timeline;
+        return events;
     }
 }

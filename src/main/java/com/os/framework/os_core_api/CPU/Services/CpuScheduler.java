@@ -45,6 +45,8 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
     }
 
     private List<Process> initializeProcesses(Object arrivalTimes, Object burstTimes, Object priorities) {
+        Process.reset();
+
         int[] arrival = convertToIntArray(arrivalTimes);
         int[] burst = convertToIntArray(burstTimes);
         int[] priority = priorities != null ? convertToIntArray(priorities) : new int[arrival.length];
@@ -63,8 +65,7 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
     private int[] convertToIntArray(Object input) {
         if (input instanceof int[]) {
             return (int[]) input;
-        } else if (input instanceof List<?>) {
-            List<?> list = (List<?>) input;
+        } else if (input instanceof List<?> list) {
             int[] array = new int[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 if (!(list.get(i) instanceof Integer)) {
@@ -79,7 +80,7 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
     }
 
     private void clearResults() {
-        this.events.clear();
+        events.clear();
     }
 
     public CpuScheduler buildScheduler(Object arrivalTimes, Object burstTimes, Object priorities, int contextSwitchingDelay) {
@@ -89,6 +90,7 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
     public void reset() {
         processes.clear();
         Process.reset();
+        events.clear();
     }
 
     public void execute() {
@@ -101,8 +103,7 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
     public void setStrategy(SchedulingStrategy strategyName) {
         Supplier<Strategy> StrategyMethod = StrategyMAP.STRATEGY_MAP.get(strategyName);
         this.strategy = StrategyMethod.get();
-        if (events != null)
-            clearResults();
+        if (events != null)  clearResults();
     }
 
 
@@ -126,7 +127,7 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
     }
 
     @Override
-    public void displayGanttChart() {
+    public String displayGanttChart() {
         if (events == null) {
             throw new IllegalStateException("Execute the scheduler before displaying the Gantt chart.");
         }
@@ -139,6 +140,8 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
                             String.format("[P%d %d-%d] ", event.getProcess().getPid(), event.getStartTime(), event.getEndTime()));
         }
         System.out.println(chart);
+
+        return chart.toString();
 
     }
 

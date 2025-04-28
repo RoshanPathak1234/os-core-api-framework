@@ -35,8 +35,6 @@ public class CpuSchedulerService {
         
         SchedulerResponse response =  buildResponse(scheduler);
 
-        scheduler.displayGanttChart();
-
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
 
@@ -48,6 +46,7 @@ public class CpuSchedulerService {
                 .efficiency(scheduler.efficiency())
                 .throughput(scheduler.throughput())
                 .processes(scheduler.getProcesses())
+                .ganttChart(scheduler.displayGanttChart())
                 .build();
     }
 
@@ -56,7 +55,7 @@ public class CpuSchedulerService {
         List<Integer> arrivalTime = new ArrayList<>(request.getArrivalTime());
         List<Integer> burstTime = new ArrayList<>(request.getBurstTime());
         int contextSwitchingDelay = 0;
-        int numberOfProcesses = 0;
+        long numberOfProcesses = 0;
 
         if (arrivalTime.size() != burstTime.size()) {
             log.error("Mismatch in size of arrival and burst times!");
