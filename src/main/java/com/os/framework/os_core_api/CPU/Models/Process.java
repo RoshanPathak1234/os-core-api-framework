@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Schema(
         description = "Represents a process in the operating system",
         requiredProperties = {"arrivalTime", "burstTime"}

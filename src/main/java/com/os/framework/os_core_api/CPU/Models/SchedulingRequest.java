@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @Data
 @Builder
+@ToString
 @Schema(description = "Input model for CPU scheduling simulation.")
 public class SchedulingRequest {
 
@@ -31,9 +33,11 @@ public class SchedulingRequest {
     @Schema(description = "Optional list of priorities. Required only for priority-based scheduling. Each value must be greater than 0.\n Note that : Lower the number higher the priority.", example = "[1, 3, 2, 4]")
     private List<@NotNull(message = "Priority values must not be null") @Min(value = 1, message = "Priority must be greater than 0!") Integer> priority;
 
-    @Min(value = 0 , message = "Context switching delay must be greater or equal to 0")
-    private Integer contextSwitchingDelay;
     @NotNull(message = "Scheduling strategy must be specified")
     @Schema(description = "The scheduling strategy to be used", implementation = SchedulingStrategy.class)
     private SchedulingStrategy strategy;
+
+
+    private CpuSchedulerConfig cpuSchedulerConfig;
+
 }

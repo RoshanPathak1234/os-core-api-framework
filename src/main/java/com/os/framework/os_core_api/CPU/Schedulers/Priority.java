@@ -1,5 +1,6 @@
 package com.os.framework.os_core_api.CPU.Schedulers;
 
+import com.os.framework.os_core_api.CPU.Models.CpuSchedulerConfig;
 import com.os.framework.os_core_api.CPU.Models.Process;
 import com.os.framework.os_core_api.CPU.Models.ProcessEvent;
 import com.os.framework.os_core_api.strategies.cpu.Strategy;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class Priority implements Strategy {
     @Override
-    public List<ProcessEvent> execute(List<Process> processes, int contextSwitchingDelay) {
+    public List<ProcessEvent> execute(List<Process> processes, CpuSchedulerConfig cpuSchedulerConfig) {
         int numberOfProcessesRemaining = processes.size();
 
         List<ProcessEvent> events = new ArrayList<>();
@@ -44,7 +45,7 @@ public class Priority implements Strategy {
                     ProcessEvent.builder()
                             .contextSwitching(true)
                             .startTime(currentTime)
-                            .endTime(currentTime += contextSwitchingDelay)
+                            .endTime(currentTime += cpuSchedulerConfig.getContextSwitchingDelay())
                             .build()
             );
 

@@ -1,5 +1,6 @@
 package com.os.framework.os_core_api.CPU.Services;
 
+import com.os.framework.os_core_api.CPU.Models.CpuSchedulerConfig;
 import com.os.framework.os_core_api.CPU.Models.ProcessEvent;
 import com.os.framework.os_core_api.strategies.cpu.Strategy;
 import com.os.framework.os_core_api.CPU.Services.Interfaces.SchedulerPerformanceMatrics;
@@ -21,26 +22,44 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
 
     private List<ProcessEvent> events;
 
-    private int contextSwitchingDelay = 0;
+    @Getter
+    private CpuSchedulerConfig cpuSchedulerConfig;
 
     @Getter
     private Strategy strategy;
 
 
     public CpuScheduler(Object arrivalTimes, Object burstTimes, Object priorities) {
-        this(arrivalTimes, burstTimes, priorities, 0);
+        this(arrivalTimes, burstTimes, priorities, new CpuSchedulerConfig());
     }
 
-    public CpuScheduler(Object arrivalTimes, Object burstTimes, Object priorities, int contextSwitchingDelay) {
+    public CpuScheduler(Object arrivalTimes, Object burstTimes, Object priorities, CpuSchedulerConfig cpuSchedulerConfig) {
         try {
-            if (contextSwitchingDelay < 0) {
-                throw new Exception("Context switching delay must be greater or equal to 0!");
+            if (cpuSchedulerConfig == null) {
+                throw new IllegalArgumentException("cpuSchedulerConfig can not be null!");
+            }
+            if (cpuSchedulerConfig.getContextSwitchingDelay() < 0) {
+                throw new IllegalArgumentException("Context switching delay must be greater or equal to 0!");
+            }
+            if(arrivalTimes == null) {
+                throw new IllegalArgumentException("Arrival time can not be null!");
+            }
+            if(burstTimes == null) {
+                throw new IllegalArgumentException("Burst Times can not be null!");
+            }
+            if(priorities == null) {
+                throw new IllegalArgumentException("Priorities can not be null!");
             }
         } catch (Exception e) {
-            log.error("Invalid context switching delay!");
+            log.error(e.getMessage());
+            return;
         }
 
-        this.contextSwitchingDelay = contextSwitchingDelay;
+        this.cpuSchedulerConfig = CpuSchedulerConfig.builder()
+                .contextSwitchingDelay(cpuSchedulerConfig.getContextSwitchingDelay())
+                .timeQuantum(cpuSchedulerConfig.getTimeQuantum())
+                .build();
+
         this.processes = initializeProcesses(arrivalTimes, burstTimes, priorities);
     }
 
@@ -83,8 +102,8 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
         events.clear();
     }
 
-    public CpuScheduler buildScheduler(Object arrivalTimes, Object burstTimes, Object priorities, int contextSwitchingDelay) {
-        return new CpuScheduler(arrivalTimes , burstTimes , priorities , contextSwitchingDelay);
+    public CpuScheduler buildScheduler(Object arrivalTimes, Object burstTimes, Object priorities, CpuSchedulerConfig cpuSchedulerConfig) {
+        return new CpuScheduler(arrivalTimes , burstTimes , priorities , cpuSchedulerConfig);
     }
 
     public void reset() {
@@ -97,7 +116,7 @@ public class CpuScheduler implements SchedulerPerformanceMatrics {
         if (strategy == null) {
             throw new IllegalStateException("No strategy set. Use setStrategy() before executing.");
         }
-        events = strategy.execute(processes, contextSwitchingDelay);
+        events = strategy.execute(processes, cpuSchedulerConfig);
     }
 
     public void setStrategy(SchedulingStrategy strategyName) {

@@ -3,6 +3,7 @@ package com.os.framework.os_core_api.CPU.Models;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -12,11 +13,15 @@ import java.util.List;
  */
 @Data
 @Builder
+@ToString
 @Schema(description = "Response model for CPU scheduling results, including performance metrics.")
 public class SchedulerResponse {
 
     @Schema(description = "List of all the processes.")
     List<Process> processes;
+
+    @Schema(description = "Cpu configurations")
+    private CpuSchedulerConfig cpuSchedulerConfig;
 
     @Schema(description = "CPU utilization as a percentage", example = "85.5")
     private double cpuUtilization;

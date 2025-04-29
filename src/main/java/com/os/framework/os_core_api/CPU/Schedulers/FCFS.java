@@ -1,5 +1,6 @@
 package com.os.framework.os_core_api.CPU.Schedulers;
 
+import com.os.framework.os_core_api.CPU.Models.CpuSchedulerConfig;
 import com.os.framework.os_core_api.CPU.Models.Process;
 import com.os.framework.os_core_api.CPU.Models.ProcessEvent;
 import com.os.framework.os_core_api.strategies.cpu.Strategy;
@@ -11,7 +12,7 @@ import java.util.List;
 public class FCFS implements Strategy {
 
     @Override
-    public List<ProcessEvent> execute(List<Process> processes, int contextSwitchingDelay) {
+    public List<ProcessEvent> execute(List<Process> processes, CpuSchedulerConfig cpuSchedulerConfig) {
         List<ProcessEvent> events = new ArrayList<>();
 
         processes.sort(Comparator.comparingInt(Process::getArrivalTime));
@@ -31,11 +32,11 @@ public class FCFS implements Strategy {
                 currentTime = process.getArrivalTime();
             }
 
-            if (contextSwitchingDelay > 0) {
+            if (cpuSchedulerConfig.getContextSwitchingDelay() > 0) {
                 events.add(ProcessEvent.builder()
                         .process(null)
                         .startTime(currentTime)
-                        .endTime(currentTime += contextSwitchingDelay)
+                        .endTime(currentTime += cpuSchedulerConfig.getContextSwitchingDelay())
                         .idle(false)
                         .contextSwitching(true)
                         .build());
