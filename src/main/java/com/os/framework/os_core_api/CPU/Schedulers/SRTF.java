@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class PriorityPreemptive implements Strategy {
+public class SRTF implements Strategy {
     int currentTime = 0;
 
     @Override
@@ -45,7 +45,7 @@ public class PriorityPreemptive implements Strategy {
                         .build());
             }
 
-            Process nextProcess = getNextArrivingHigherPriorityProcess(processes, currentProcess);
+            Process nextProcess = getNextArrivingLowestBurstTimeProcess(processes, currentProcess);
 
             int executeUntil;
 
@@ -84,15 +84,16 @@ public class PriorityPreemptive implements Strategy {
     private Process getCurrentProcess(List<Process> processes) {
         return processes.stream()
                 .filter(p -> !p.isCompleted() && p.getArrivalTime() <= currentTime)
-                .min(Comparator.comparingInt(Process::getPriority))
+                .min(Comparator.comparingInt(Process::getBurstTime))
                 .orElse(null);
     }
 
-    private Process getNextArrivingHigherPriorityProcess(List<Process> processes, Process currentProcess) {
+    private Process getNextArrivingLowestBurstTimeProcess(List<Process> processes, Process currentProcess) {
         return processes.stream()
                 .filter(p -> !p.isCompleted() && p.getArrivalTime() >= currentTime
-                        && p.getPriority() < currentProcess.getPriority())
+                        && p.getBurstTime() < currentProcess.getBurstTime())
                 .min(Comparator.comparingInt(Process::getArrivalTime))
                 .orElse(null);
     }
 }
+

@@ -42,13 +42,16 @@ public class SJF implements Strategy {
                 currentTime = idleDuration;
                 continue;
             }
-            events.add(
-                    ProcessEvent.builder()
-                            .contextSwitching(true)
-                            .startTime(currentTime)
-                            .endTime(currentTime += contextSwitchingDelay)
-                            .build()
-            );
+
+            if(contextSwitchingDelay > 0) {
+                events.add(
+                        ProcessEvent.builder()
+                                .contextSwitching(true)
+                                .startTime(currentTime)
+                                .endTime(currentTime += contextSwitchingDelay)
+                                .build()
+                );
+            }
 
             readyQ.sort(Comparator.comparingInt(Process::getBurstTime));
 
@@ -71,13 +74,10 @@ public class SJF implements Strategy {
                 process.setTurnAroundTime(tat);
                 process.setWaitingTime(wt);
 
-
                 numberOfProcessesRemaining--;
-
             }
 
         }
-
 
         return events;
     }

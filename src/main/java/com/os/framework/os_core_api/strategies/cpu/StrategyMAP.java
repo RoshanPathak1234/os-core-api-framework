@@ -12,7 +12,7 @@ public class StrategyMAP {
     static {
         STRATEGY_MAP.put(SchedulingStrategy.FCFS, FCFS::new);
         STRATEGY_MAP.put(SchedulingStrategy.SJF, SJF::new);
-        STRATEGY_MAP.put(SchedulingStrategy.SJF_PREEMPTIVE, SJF_PREEMPTIVE::new);
+        STRATEGY_MAP.put(SchedulingStrategy.SRTF, SRTF::new);
         STRATEGY_MAP.put(SchedulingStrategy.PRIORITY, Priority::new);
         STRATEGY_MAP.put(SchedulingStrategy.PRIORITY_PREEMPTIVE, PriorityPreemptive::new);
         STRATEGY_MAP.put(SchedulingStrategy.ROUND_ROBIN, RoundRobin::new);

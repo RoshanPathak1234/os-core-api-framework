@@ -31,7 +31,7 @@ public enum SchedulingStrategy {
      * Preempts the current process if a new process has a shorter burst time.
      */
     @Schema(description = "Shortest Job First (Preemptive) / Shortest Remaining Time First")
-    SJF_PREEMPTIVE,
+    SRTF,
 
     /**
      * Priority Scheduling (Non-preemptive).
