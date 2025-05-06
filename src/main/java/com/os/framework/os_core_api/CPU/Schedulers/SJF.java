@@ -24,6 +24,9 @@ public class SJF implements Strategy {
             final int finalCurrentTime = currentTime;
             List<Process> readyQ = new ArrayList<>(processes.stream()
                     .filter(process -> !process.isCompleted() && process.getArrivalTime() <= finalCurrentTime)
+                    .sorted(Comparator.comparingInt(Process::getBurstTime)
+                            .thenComparing(Comparator.comparingInt(Process::getPriority))
+                            .thenComparing(Comparator.comparingInt(Process::getArrivalTime)))
                     .toList());
 
             if(readyQ.isEmpty()) {
@@ -53,8 +56,6 @@ public class SJF implements Strategy {
                                 .build()
                 );
             }
-
-            readyQ.sort(Comparator.comparingInt(Process::getBurstTime));
 
             for (Process process : readyQ) {
                 events.add(

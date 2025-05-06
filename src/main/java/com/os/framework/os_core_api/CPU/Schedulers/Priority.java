@@ -22,6 +22,9 @@ public class Priority implements Strategy {
             final int finalCurrentTime = currentTime;
             List<Process> readyQ = new ArrayList<>(processes.stream()
                     .filter(process -> !process.isCompleted() && process.getArrivalTime() <= finalCurrentTime)
+                    .sorted(Comparator.comparingInt(Process::getPriority)
+                            .thenComparing(Comparator.comparingInt(Process::getArrivalTime))
+                            .thenComparing(Comparator.comparingInt(Process::getBurstTime)))
                     .toList());
 
             if (readyQ.isEmpty()) {
@@ -48,8 +51,6 @@ public class Priority implements Strategy {
                             .endTime(currentTime += cpuSchedulerConfig.getContextSwitchingDelay())
                             .build()
             );
-
-            readyQ.sort(Comparator.comparingInt(Process::getPriority));
 
             for (Process process : readyQ) {
                 events.add(
